@@ -13,6 +13,8 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 from pathlib import Path
 from environ import Env
 
+import task_manager
+
 env = Env()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -46,6 +48,7 @@ INSTALLED_APPS = [
 
     # local
     'first_app.apps.FirstAppConfig',
+    "task_manager.apps.TaskManagerConfig",
 
 ]
 
@@ -127,7 +130,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
 
-LANGUAGE_CODE = 'ru'
+LANGUAGE_CODE = 'en'
 
 TIME_ZONE = 'UTC'
 
