@@ -21,8 +21,8 @@ from first_app.views import django_greetings, user_greetings
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('greetings/', django_greetings),
-    path('greetings-f-str/', user_greetings, name='greetings'),
+    path('greetings/', django_greetings, name='django_greetings'),
+    path('greetings_hello/<str:name>', user_greetings),
 ]
 
 # http://127.0.0.1:8000

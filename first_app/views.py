@@ -7,9 +7,8 @@ def django_greetings(request) -> HttpResponse:
     )
 
 
-def user_greetings(request):
-    name ="Vladimyr"
+def user_greetings(request, name) -> HttpResponse:
     return HttpResponse(
-        f"<h2>Greetings, {name} !!! :3 </h2>"
+        f"<h2>Hello, {name} .</h2>"
     )
 
