@@ -13,7 +13,6 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 from pathlib import Path
 from environ import Env
 
-import task_manager
 
 env = Env()
 
