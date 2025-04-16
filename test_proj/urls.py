@@ -15,7 +15,7 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
 
 from first_app.views import django_greetings, user_greetings
 
@@ -23,6 +23,8 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('greetings/', django_greetings, name='django_greetings'),
     path('greetings_hello/<str:name>', user_greetings),
+
+    path('api/', include('task_manager.urls')),
 ]
 
 # http://127.0.0.1:8000
