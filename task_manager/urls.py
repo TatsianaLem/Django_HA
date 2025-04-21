@@ -7,6 +7,9 @@ from task_manager.api_views import (
     CategoryCreateAPIView,
     SubTaskListCreateAPIView,
     SubTaskDetailUpdateDeleteView,
+    TaskListByWeekdayAPIView,
+    SubTaskPaginatedListAPIView,
+    SubTaskFilteredListAPIView,
 )
 
 urlpatterns = [
@@ -17,4 +20,7 @@ urlpatterns = [
     path('categories/create/', CategoryCreateAPIView.as_view(), name='category-create'),
     path('subtasks/', SubTaskListCreateAPIView.as_view(), name='subtask-list-create'),
     path('subtasks/<int:pk>/', SubTaskDetailUpdateDeleteView.as_view(), name='subtask-detail-update'),
+    path('tasks/by-weekday/', TaskListByWeekdayAPIView.as_view(), name='task-by-weekday'),
+    path('subtasks/paginated/', SubTaskPaginatedListAPIView.as_view(), name='subtask-paginated'),
+    path('subtasks/filtered/', SubTaskFilteredListAPIView.as_view(), name='subtask-filtered'),
 ]

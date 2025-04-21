@@ -1,6 +1,7 @@
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.generics import ListAPIView
 from task_manager.models import Task, Category, SubTask
 from django.db.models import Count
 from task_manager.serializers import (
@@ -9,6 +10,7 @@ from task_manager.serializers import (
     TaskCreateSerializer,
     SubTaskCreateSerializer
 )
+from task_manager.pagination import SubTaskPagination
 from django.utils import timezone
 from django.shortcuts import get_object_or_404
 
@@ -30,6 +32,28 @@ class TaskDetailAPIView(APIView):
     def get(self, request, pk):
         task = get_object_or_404(Task, pk=pk)
         serializer = TaskSerializer(task)
+        return Response(serializer.data)
+
+class TaskListByWeekdayAPIView(APIView):
+    def get(self, request):
+        weekday_param = request.query_params.get('weekday', None)
+        tasks = Task.objects.all()
+
+        if weekday_param:
+            weekdays = {
+                'понедельник': 0,
+                'вторник': 1,
+                'среда': 2,
+                'четверг': 3,
+                'пятница': 4,
+                'суббота': 5,
+                'воскресенье': 6,
+            }
+            weekday_num = weekdays.get(weekday_param.lower())
+            if weekday_num is not None:
+                tasks = tasks.filter(deadline__week_day=weekday_num + 1)
+
+        serializer = TaskSerializer(tasks, many=True)
         return Response(serializer.data)
 
 class TaskStatsView(APIView):
@@ -85,3 +109,26 @@ class SubTaskDetailUpdateDeleteView(APIView):
         subtask = get_object_or_404(SubTask, pk=pk)
         subtask.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+class SubTaskPaginatedListAPIView(ListAPIView):
+    queryset = SubTask.objects.all().order_by('-created_at')
+    serializer_class = SubTaskCreateSerializer
+    pagination_class = SubTaskPagination
+
+class SubTaskFilteredListAPIView(ListAPIView):
+    serializer_class = SubTaskCreateSerializer
+    pagination_class = SubTaskPagination
+
+    def get_queryset(self):
+        queryset = SubTask.objects.all().order_by('-created_at')
+
+        task_title = self.request.query_params.get('task_title')
+        status_param = self.request.query_params.get('status')
+
+        if task_title:
+            queryset = queryset.filter(task__title__icontains=task_title)
+
+        if status_param:
+            queryset = queryset.filter(status=status_param)
+
+        return queryset
