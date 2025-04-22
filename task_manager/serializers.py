@@ -4,8 +4,8 @@ from task_manager.models import (
     SubTask,
     Category
 )
-from datetime import date
-
+# from datetime import date
+from django.utils import timezone
 
 class CategoryCreateSerializer(serializers.ModelSerializer):
     class Meta:
@@ -25,7 +25,11 @@ class CategoryCreateSerializer(serializers.ModelSerializer):
 
         if name != instance.name and Category.objects.filter(name=name).exists():
             raise serializers.ValidationError({"name": "Категория с таким названием уже существует."})
-        instance.name = name
+        # instance.name = name
+        # instance.save()
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+
         instance.save()
         return instance
 
@@ -59,7 +63,8 @@ class TaskCreateSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
     def validate_deadline(self, value):
-        if value < date.today():
+        #if value < date.today():
+        if value < timezone.now():
             raise serializers.ValidationError("Дата дедлайна не может быть в прошлом.")
         return value
 
@@ -68,5 +73,15 @@ class TaskDetailSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Task
-        fields = ['id', 'title', 'description', 'status', 'deadline', 'created_at', 'subtasks']
+        fields = [
+            'id',
+            'title',
+            'description',
+            'status',
+            'deadline',
+            'created_at',
+            'subtasks'
+        ]
+        # fields = "__all__"
+        # exclude = ['updated_at']
 
