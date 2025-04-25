@@ -4,7 +4,7 @@ from task_manager.models import (
     SubTask,
     Category
 )
-# from datetime import date
+from datetime import date
 from django.utils import timezone
 
 class CategoryCreateSerializer(serializers.ModelSerializer):
@@ -63,8 +63,8 @@ class TaskCreateSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
     def validate_deadline(self, value):
-        #if value < date.today():
-        if value < timezone.now():
+        if value < date.today():
+        #if value < timezone.now():
             raise serializers.ValidationError("Дата дедлайна не может быть в прошлом.")
         return value
 
