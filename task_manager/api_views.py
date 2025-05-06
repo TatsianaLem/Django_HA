@@ -1,6 +1,8 @@
 from rest_framework import status, filters
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.viewsets import ModelViewSet
+from rest_framework.decorators import action
 from rest_framework.generics import ListAPIView, ListCreateAPIView, RetrieveUpdateDestroyAPIView
 from task_manager.models import Task, Category, SubTask
 from django.db.models import Count
@@ -91,13 +93,29 @@ class TaskStatsView(APIView):
             'overdue_tasks': overdue_tasks
         })
 
-class CategoryCreateAPIView(APIView):
-    def post(self, request):
-        serializer = CategoryCreateSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(data=serializer.data, status=status.HTTP_201_CREATED)
-        return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+# class CategoryCreateAPIView(APIView):
+#     def post(self, request):
+#         serializer = CategoryCreateSerializer(data=request.data)
+#         if serializer.is_valid():
+#             serializer.save()
+#             return Response(data=serializer.data, status=status.HTTP_201_CREATED)
+#         return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class CategoryViewSet(ModelViewSet):
+    queryset = Category.objects.all()
+    serializer_class = CategoryCreateSerializer
+
+    @action(detail=True, methods=["get"])
+    def count_tasks(self, request, pk=None):
+        category = self.get_object()
+        task_count = Task.objects.filter(categories=category).count()
+        return Response(
+            {
+                "category": category.name,
+                "task_count": task_count
+            }
+        )
+
 
 # class SubTaskListCreateAPIView(APIView):
 #     def get(self, request):

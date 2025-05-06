@@ -1,4 +1,5 @@
 from django.urls import path
+from rest_framework.routers import DefaultRouter
 from task_manager.api_views import (
     # TaskCreateAPIView,
     # TaskListAPIView,
@@ -6,7 +7,8 @@ from task_manager.api_views import (
     TaskListCreateAPIView,
     TaskRetrieveUpdateDeleteAPIView,
     TaskStatsView,
-    CategoryCreateAPIView,
+    #CategoryCreateAPIView,
+    CategoryViewSet,
     SubTaskListCreateAPIView,
     # SubTaskDetailUpdateDeleteView,
     SubTaskRetrieveUpdateDeleteAPIView,
@@ -15,6 +17,10 @@ from task_manager.api_views import (
     SubTaskFilteredListAPIView,
 )
 
+router = DefaultRouter()
+
+router.register(r'categories', CategoryViewSet, basename='category')
+
 urlpatterns = [
     # path('tasks/create/', TaskCreateAPIView.as_view(), name='task-create'),
     # path('tasks/', TaskListAPIView.as_view(), name='task-list'),
@@ -22,11 +28,11 @@ urlpatterns = [
     path('tasks/', TaskListCreateAPIView.as_view(), name='task-list-create'),
     path('tasks/<int:pk>/', TaskRetrieveUpdateDeleteAPIView.as_view(), name='task-detail'),
     path('tasks/stats/', TaskStatsView.as_view(), name='task-stats'),
-    path('categories/create/', CategoryCreateAPIView.as_view(), name='category-create'),
+    #path('categories/create/', CategoryCreateAPIView.as_view(), name='category-create'),
     path('subtasks/', SubTaskListCreateAPIView.as_view(), name='subtask-list-create'),
     # path('subtasks/<int:pk>/', SubTaskDetailUpdateDeleteView.as_view(), name='subtask-detail-update'),
     path('subtasks/<int:pk>/', SubTaskRetrieveUpdateDeleteAPIView.as_view(), name='subtask-detail'),
     path('tasks/by-weekday/', TaskListByWeekdayAPIView.as_view(), name='task-by-weekday'),
     path('subtasks/paginated/', SubTaskPaginatedListAPIView.as_view(), name='subtask-paginated'),
     path('subtasks/filtered/', SubTaskFilteredListAPIView.as_view(), name='subtask-filtered'),
-]
+] + router.urls
