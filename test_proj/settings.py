@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path
 from environ import Env
+import logging.handlers
 
 
 env = Env()
@@ -54,6 +55,9 @@ INSTALLED_APPS = [
 ]
 
 REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
+    'PAGE_SIZE': 6,
+
     'DEFAULT_FILTER_BACKENDS': [
         'rest_framework.filters.SearchFilter',
         'rest_framework.filters.OrderingFilter',
@@ -136,6 +140,57 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+
+    'formatters': {
+        'verbose': {
+            'format': '[{asctime}] {levelname} {name}:{lineno} | {message}',
+            'style': '{',
+            'datefmt': '%Y-%m-%d %H:%M:%S',
+        }
+    },
+
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+            'level': 'DEBUG' if DEBUG else 'INFO',
+            'formatter': 'verbose',
+        },
+        'file':{
+            'class': 'logging.handlers.RotatingFileHandler',
+            'level': 'DEBUG' if DEBUG else 'INFO',
+            'formatter': 'verbose',
+            'filename': str(BASE_DIR / 'logs' / 'db_logs.log'),
+            'maxBytes': 10_000_000,
+            'backupCount': 5,
+            'encoding': 'utf-8',
+        },
+        'http_file': {
+            'class': 'logging.handlers.RotatingFileHandler',
+            'level': 'DEBUG' if DEBUG else 'INFO',
+            'formatter': 'verbose',
+            'filename': str(BASE_DIR / 'logs' / 'http_logs.log'),
+            'maxBytes': 10_000_000,
+            'backupCount': 5,
+            'encoding': 'utf-8',
+        }
+    },
+
+    'loggers': {
+        'django.db.backends': {
+            'handlers': ['console', 'file'],
+            'level': 'DEBUG' if DEBUG else 'INFO',
+            'propagate': False,
+        },
+        'django.request': {
+            'handlers': ['http_file'],
+            'level': 'DEBUG' if DEBUG else 'INFO',
+            'propagate': False,
+        }
+    }
+}
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/

@@ -173,11 +173,11 @@ class SubTaskRetrieveUpdateDeleteAPIView(RetrieveUpdateDestroyAPIView):
 class SubTaskPaginatedListAPIView(ListAPIView):
     queryset = SubTask.objects.all().order_by('-created_at')
     serializer_class = SubTaskCreateSerializer
-    pagination_class = SubTaskPagination
+    #pagination_class = SubTaskPagination
 
 class SubTaskFilteredListAPIView(ListAPIView):
     serializer_class = SubTaskCreateSerializer
-    pagination_class = SubTaskPagination
+    #pagination_class = SubTaskPagination
 
     def get_queryset(self):
         queryset = SubTask.objects.all().order_by('-created_at')
