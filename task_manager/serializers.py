@@ -40,6 +40,9 @@ class SubTaskSerializer(serializers.ModelSerializer):
         read_only_fields = ['created_at']
 
 class SubTaskCreateSerializer(serializers.ModelSerializer):
+    owner = serializers.HiddenField(
+        default=serializers.CurrentUserDefault()
+    )
     class Meta:
         model = SubTask
         fields = '__all__'
@@ -52,6 +55,9 @@ class TaskSerializer(serializers.ModelSerializer):
 
 
 class TaskCreateSerializer(serializers.ModelSerializer):
+    owner = serializers.HiddenField(
+        default=serializers.CurrentUserDefault()
+    )
     categories = serializers.PrimaryKeyRelatedField(
         many=True,
         queryset=Category.objects.all(),

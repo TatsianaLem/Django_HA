@@ -1,6 +1,7 @@
 from django.urls import path
 from rest_framework.routers import DefaultRouter
 from task_manager.api_views import (
+    MyTaskListAPIView,
     # TaskCreateAPIView,
     # TaskListAPIView,
     # TaskDetailAPIView,
@@ -22,6 +23,7 @@ router = DefaultRouter()
 router.register(r'categories', CategoryViewSet, basename='category')
 
 urlpatterns = [
+    path('tasks/my/', MyTaskListAPIView.as_view(), name='my-tasks'),
     # path('tasks/create/', TaskCreateAPIView.as_view(), name='task-create'),
     # path('tasks/', TaskListAPIView.as_view(), name='task-list'),
     # path('tasks/<int:pk>/', TaskDetailAPIView.as_view(), name='task-detail'),

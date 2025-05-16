@@ -1,11 +1,12 @@
 from rest_framework import status, filters
-from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.decorators import action
 from rest_framework.generics import ListAPIView, ListCreateAPIView, RetrieveUpdateDestroyAPIView
 from task_manager.models import Task, Category, SubTask
+from task_manager.permissions.custom_permissions import IsOwnerOrReadOnly
 from django.db.models import Count
 from task_manager.serializers import (
     TaskSerializer,
@@ -17,6 +18,13 @@ from django_filters.rest_framework import DjangoFilterBackend
 from task_manager.pagination import SubTaskPagination
 from django.utils import timezone
 from django.shortcuts import get_object_or_404
+
+class MyTaskListAPIView(ListAPIView):
+    serializer_class = TaskCreateSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return Task.objects.filter(owner=self.request.user).order_by('-created_at')
 
 # class TaskCreateAPIView(APIView):
 #     def post(self, request):
@@ -43,6 +51,9 @@ class TaskListCreateAPIView(ListCreateAPIView):
     serializer_class = TaskCreateSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
 
+    def perform_create(self, serializer):
+        serializer.save(owner=self.request.user)
+
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     filterset_fields = ['status', 'deadline']
     search_fields = ['title', 'description']
@@ -52,7 +63,7 @@ class TaskListCreateAPIView(ListCreateAPIView):
 class TaskRetrieveUpdateDeleteAPIView(RetrieveUpdateDestroyAPIView):
     queryset = Task.objects.all()
     serializer_class = TaskCreateSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    permission_classes = [IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
 
 
 class TaskListByWeekdayAPIView(APIView):
@@ -164,7 +175,10 @@ class CategoryViewSet(ModelViewSet):
 class SubTaskListCreateAPIView(ListCreateAPIView):
     queryset = SubTask.objects.all().order_by('-created_at')
     serializer_class = SubTaskCreateSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    permission_classes = [IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
+
+    def perform_create(self, serializer):
+        serializer.save(owner=self.request.user)
 
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     filterset_fields = ['status', 'deadline']

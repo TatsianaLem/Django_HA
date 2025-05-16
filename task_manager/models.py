@@ -1,6 +1,9 @@
 from django.db import models
 from django.utils import timezone
+from django.contrib.auth import get_user_model
 from task_manager.managers.categories import CategoryManager
+
+User = get_user_model()
 
 status_choices = [
     ("New", "New"),
@@ -43,6 +46,11 @@ class Task(models.Model):
     status = models.CharField(max_length=100, choices=status_choices, default="New")
     deadline = models.DateField()
     created_at = models.DateTimeField(auto_now_add=True)
+    owner = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='tasks'
+    )
 
     def __str__(self):
         return self.title
@@ -64,6 +72,11 @@ class SubTask(models.Model):
     status = models.CharField(max_length=100, choices=status_choices, default="New")
     deadline = models.DateField()
     created_at = models.DateTimeField(auto_now_add=True)
+    owner = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='subtasks'
+    )
 
     def __str__(self):
         return self.title
