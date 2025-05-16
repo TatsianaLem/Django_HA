@@ -1,4 +1,5 @@
 from rest_framework import status, filters
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
@@ -40,6 +41,7 @@ from django.shortcuts import get_object_or_404
 class TaskListCreateAPIView(ListCreateAPIView):
     queryset = Task.objects.all()
     serializer_class = TaskCreateSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     filterset_fields = ['status', 'deadline']
@@ -50,9 +52,12 @@ class TaskListCreateAPIView(ListCreateAPIView):
 class TaskRetrieveUpdateDeleteAPIView(RetrieveUpdateDestroyAPIView):
     queryset = Task.objects.all()
     serializer_class = TaskCreateSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
 
 class TaskListByWeekdayAPIView(APIView):
+    permission_classes = [IsAuthenticatedOrReadOnly]
+
     def get_queryset(self, request):
         tasks = Task.objects.all()
 
@@ -104,6 +109,7 @@ class TaskStatsView(APIView):
 class CategoryViewSet(ModelViewSet):
     queryset = Category.objects.all()
     serializer_class = CategoryCreateSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
     @action(detail=True, methods=["get"])
     def count_tasks(self, request, pk=None):
@@ -158,6 +164,7 @@ class CategoryViewSet(ModelViewSet):
 class SubTaskListCreateAPIView(ListCreateAPIView):
     queryset = SubTask.objects.all().order_by('-created_at')
     serializer_class = SubTaskCreateSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     filterset_fields = ['status', 'deadline']
@@ -168,15 +175,18 @@ class SubTaskListCreateAPIView(ListCreateAPIView):
 class SubTaskRetrieveUpdateDeleteAPIView(RetrieveUpdateDestroyAPIView):
     queryset = SubTask.objects.all()
     serializer_class = SubTaskCreateSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
 
 class SubTaskPaginatedListAPIView(ListAPIView):
     queryset = SubTask.objects.all().order_by('-created_at')
     serializer_class = SubTaskCreateSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
     #pagination_class = SubTaskPagination
 
 class SubTaskFilteredListAPIView(ListAPIView):
     serializer_class = SubTaskCreateSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
     #pagination_class = SubTaskPagination
 
     def get_queryset(self):

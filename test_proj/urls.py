@@ -16,6 +16,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from rest_framework_simplejwt.views import (TokenObtainPairView, TokenRefreshView,)
 
 from first_app.views import django_greetings, user_greetings
 
@@ -25,6 +26,8 @@ urlpatterns = [
     path('greetings_hello/<str:name>', user_greetings),
 
     path('api/', include('task_manager.urls')),
+    path('auth-login-jwt/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('token-refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 ]
 
 # http://127.0.0.1:8000
