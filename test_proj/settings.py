@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'django_filters',
     'drf_yasg',
+    'rest_framework_simplejwt.token_blacklist',
 
     # local
     'first_app.apps.FirstAppConfig',
@@ -66,6 +67,8 @@ SIMPLE_JWT = {
     'AUTH_HEADER_TYPES': ('Bearer',),
     'AUTH_TOKEN_CLASSES': ('rest_framework_simplejwt.tokens.AccessToken',),
      #'TOKEN_OBTAIN_SERIALIZER': 'свой путь к новому сериализатору',
+
+    'TOKEN_BLACKLIST_ENABLED': True,
 }
 
 SWAGGER_SETTINGS = {
