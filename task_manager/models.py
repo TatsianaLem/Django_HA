@@ -52,6 +52,10 @@ class Task(models.Model):
         related_name='tasks'
     )
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._original_status = self.status
+
     def __str__(self):
         return self.title
 
