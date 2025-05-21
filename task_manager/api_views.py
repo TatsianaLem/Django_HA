@@ -235,9 +235,7 @@ class LogoutAPIView(APIView):
     def post(self, request):
         try:
             refresh_token = request.data["refresh"]
-            token = RefreshToken(refresh_token)
-            token.blacklist()
-            return Response({"detail": "Токен занесён в blacklist. Выход выполнен."},
+            return Response({"detail": "Выход выполнен. (Токен не помещён в blacklist)"},
                             status=status.HTTP_205_RESET_CONTENT)
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)

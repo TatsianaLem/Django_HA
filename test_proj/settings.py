@@ -49,7 +49,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'django_filters',
     'drf_yasg',
-    'rest_framework_simplejwt.token_blacklist',
+    # 'rest_framework_simplejwt.token_blacklist',
 
     # local
     'first_app.apps.FirstAppConfig',
@@ -110,6 +110,12 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'test_proj.urls'
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+DEFAULT_FROM_EMAIL = 'no-reply@taskmanager.local'
+# EMAIL_HOST = "localhost"
+# EMAIL_PORT = 1025
+
 
 TEMPLATES = [
     {
